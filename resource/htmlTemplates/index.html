@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<style>
+  * {
+    word-break: break-all;
+    box-sizing: border-box;
+  }
+
+  body {
+    width: 800px;
+    margin: auto;
+  }
+
+  h2,
+  ul {
+    margin: 0;
+  }
+</style>
+<script>
+  NodeList.prototype.forEach = Array.prototype.forEach;
+  const 左データ = [/* template:左 */];
+  const 右データ = [/* template:右 */];
+  window.addEventListener("DOMContentLoaded", (e) => {
+    const マージデータ = マージ();
+    違うapiをhtmlに反映(マージデータ);
+    同じapiをhtmlに反映(マージデータ);
+  }, false);
+  class ApiDetail extends HTMLElement {
+    constructor() {
+      super();
+      const shadow = this.attachShadow({ mode: 'open' });
+      const style = document.createElement("style");
+      style.innerHTML = `
+      .apiDetail {
+    display: flex;
+    border: solid 1px gray;
+  }
+
+  .apiDetail .numbersPanret {
+    display: flex;
+    background-color: rgb(219, 219, 219);
+    flex: 0 0 130px;
+  }
+
+  .apiDetail .numbersPanret .left {
+    flex: 2 2 0;
+    text-align: right;
+  }
+
+  .apiDetail .numbersPanret .center {
+    flex: 1 1 0;
+    text-align: center;
+  }
+
+  .apiDetail .numbersPanret .right {
+    flex: 2 2 0;
+    text-align: right;
+    padding-right: 5px;
+  }
+
+  .apiDetail .url {
+    padding-left: 5px;
+  }`;
+      const rootDiv = document.createElement("div");
+      rootDiv.innerHTML = ` <div class="numbersPanret">
+      <div class="left">1000</div>
+      <div class="center">＜</div>
+      <div class="right">なし</div>
+    </div>
+    <div class="url">/hoge/kage/api</div>`;
+      rootDiv.classList.add("apiDetail");
+      shadow.appendChild(style);
+      shadow.appendChild(rootDiv);
+      this.elements = {
+        api名: rootDiv.querySelector(".url"),
+        limit左: rootDiv.querySelector(".left"),
+        limit中: rootDiv.querySelector(".center"),
+        limit右: rootDiv.querySelector(".right"),
+      };
+      this.api名設定("");
+      this.limit設定(null, null);
+    }
+    connectedCallback() {
+    }
+    api名設定(api名) {
+      this.elements.api名.innerText = api名;
+    }
+    limit設定(左, 右) {
+      if (左 === null) {
+        this.elements.limit左.innerText = "なし";
+      } else {
+        this.elements.limit左.innerText = 左;
+      }
+      if (左 === 右) {
+        this.elements.limit中.innerText = "＝";
+      } else if (左 > 右) {
+        this.elements.limit中.innerText = "＞";
+      } else if (左 < 右) {
+        this.elements.limit中.innerText = "＜";
+      } else {
+        this.elements.limit中.innerText = "≠";
+      }
+      if (右 === null) {
+        this.elements.limit右.innerText = "なし";
+      } else {
+        this.elements.limit右.innerText = 右;
+      }
+    }
+  }
+  window.customElements.define("api-detail", ApiDetail);
+  function マージ() {
+    // 左と右をマージする
+    const マージデータ = [];// {api名:"/hoige/kage",左:null,右:100};
+    左データ.forEach(a => {
+      マージデータ.push({
+        "api名": a.api名,
+        "左": a.limit数,
+        "右": null
+      });
+    });
+    右データ.forEach(a => {
+      const 存在データ = マージデータ.find(b => b.api名 == a.api名);
+      if (存在データ == null) {
+        マージデータ.push({
+          "api名": a.api名,
+          "左": null,
+          "右": a.limit数
+        });
+      } else {
+        存在データ.右 = a.limit数;
+      }
+    });
+    マージデータ.sort((a, b) => a.api名.localeCompare(b.api名));
+    return マージデータ;
+  }
+  function 違うapiをhtmlに反映(マージ済みのapiデータ){
+    const divElement = document.querySelector("#diffrence-api");
+    for (let apiデータ of マージ済みのapiデータ) {
+      if (apiデータ.右 === apiデータ.左) {
+        continue;
+      }
+      const elem = document.createElement("api-detail");
+      elem.api名設定(apiデータ.api名);
+      elem.limit設定(apiデータ.右, apiデータ.左);
+      divElement.appendChild(elem);
+    }
+
+  }
+  function 同じapiをhtmlに反映(マージ済みのapiデータ) {
+    const divElement = document.querySelector("#same-api");
+    for (let apiデータ of マージ済みのapiデータ) {
+      if (apiデータ.右 !== apiデータ.左) {
+        continue;
+      }
+      const elem = document.createElement("api-detail");
+      elem.api名設定(apiデータ.api名);
+      elem.limit設定(apiデータ.右, apiデータ.左);
+      divElement.appendChild(elem);
+    }
+  }
+</script>
+<h2>比較対象一覧</h2>
+<ul>
+  <li><a href="./typeA.html">一般アプリでアプリ認証とユーザ認証の比較</a></li>
+  <li><a href="./typeB.html">公式アプリでアプリ認証とユーザ認証の比較</a></li>
+  <li><a href="./typeC.html">アプリ認証で一般アプリと公式アプリの比較</a></li>
+  <li><a href="./typeD.html">ユーザ認証で一般アプリと公式アプリの比較</a></li>
+</ul>
+<h2>違いがあるapi</h2>
+<div style="margin-left:10px;" id="diffrence-api">
+</div>
+<h2>同じapi</h2>
+<div style="margin-left:10px;" id="same-api">
+</div>

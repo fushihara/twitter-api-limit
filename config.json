@@ -1,0 +1,29 @@
+{
+  "apiKeys": [
+    {
+      "type": "officialApp",
+      "consumer_key": "",
+      "consumer_secret": "",
+      "access_token_key": "",
+      "access_token_secret": ""
+    },
+    {
+      "type": "unOfficialApp",
+      "consumer_key": "",
+      "consumer_secret": "",
+      "access_token_key": "",
+      "access_token_secret": ""
+    }
+  ],
+  "logJsonDirectory": "./../save/logs/",
+  "htmlDirectory": "./../save/html/",
+  "gitDirectory": "./../save/git/",
+  "express": {
+    "port": 55508,
+    "urlPrefix": "/twitter-api-limit/"
+  },
+  "slack": {
+    "apiKey": "",
+    "roomId": ""
+  }
+}

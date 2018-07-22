@@ -1,0 +1,1 @@
+export type api名とリミットの情報 = { api名: string, limit数: number };
