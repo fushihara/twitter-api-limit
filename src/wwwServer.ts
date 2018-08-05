@@ -4,6 +4,8 @@ import { join, posix } from "path";
 import { Config } from "./config";
 import { 最新ファイル読み込み } from "./dataSave";
 import { api名とリミットの情報 } from "./type";
+import { mergeDateformat } from "@fushihara/merge-dateformat";
+const log = (message: string) => { console.log(mergeDateformat(message)) };
 
 
 export class WwwServer {
@@ -27,7 +29,7 @@ export class WwwServer {
       this.ユーザ認証で一般アプリと公式アプリの比較(response);
     });
     app.listen(args.config.express.port, () => {
-      console.log(`http://localhost:${args.config.express.port}${args.config.express.urlPrefix}`);
+      log(`http://localhost:${args.config.express.port}${args.config.express.urlPrefix}`);
     });
   }
   private 一般アプリでアプリ認証とユーザ認証の比較(response: express.Response) {
