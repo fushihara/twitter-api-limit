@@ -1,4 +1,3 @@
-import { mkdirSync } from "fs";
 import { join, dirname, normalize } from "path";
 import * as dateFormat from "dateformat";
 import { writeFileSync, readFileSync, existsSync, statSync, readdirSync, ensureDirSync } from "fs-extra"
